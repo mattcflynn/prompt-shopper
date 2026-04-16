@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Shopper</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #d4d0c8;
+      --surface: #ffffff;
+      --border-light: #ffffff;
+      --border-dark: #808080;
+      --border-darker: #404040;
+      --text: #000000;
+      --muted: #444444;
+      --navy: #000080;
+      --navy-light: #1084d0;
+      --yellow: #ffff00;
+      --warning: #7a4f1e;
+      --warning-light: #fdf3e7;
+      --raised: 2px 2px 0 var(--border-light), -1px -1px 0 var(--border-dark);
+      --inset: -1px -1px 0 var(--border-light), 1px 1px 0 var(--border-dark);
+      --mono: 'Courier New', Courier, monospace;
+    }
+
+    body {
+      font-family: 'Times New Roman', Times, Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      padding: 0;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 24px 10px;
+    }
+
+    .header-logo {
+      font-family: Impact, 'Arial Black', Arial, sans-serif;
+      font-size: 2.2rem;
+      color: var(--yellow);
+      letter-spacing: 0.02em;
+      text-shadow: 2px 2px 0 #000;
+      line-height: 1;
+    }
+
+    .header-logo span {
+      color: #ffffff;
+    }
+
+    .header-badge {
+      background: #ff0000;
+      color: #ffffff;
+      font-family: Impact, 'Arial Black', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border: 2px outset #ff6666;
+      transform: rotate(-3deg);
+      white-space: nowrap;
+      margin-top: -8px;
+    }
+
+    .header-tagline {
+      color: #a0c8ff;
+      font-size: 0.85rem;
+      font-style: italic;
+      padding: 0 24px 10px;
+    }
+
+    .header-nav {
+      background: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-bottom: 2px solid #404040;
+      padding: 4px 24px;
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+    }
+
+    .header-nav a {
+      color: var(--navy);
+      text-decoration: none;
+      padding: 2px 10px;
+      border: 1px outset #c0c0c0;
+      background: #c0c0c0;
+      font-weight: bold;
+    }
+
+    .header-nav a:hover {
+      background: var(--navy);
+      color: white;
+    }
+
+    .header-nav .sep {
+      color: #808080;
+      padding: 0 4px;
+    }
+
+    .layout {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 20px 20px 48px;
+    }
+
+    /* ── PANELS (Windows 95 raised) ── */
+    .panel {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      padding: 0;
+      margin-bottom: 16px;
+    }
+
+    .panel-titlebar {
+      background: var(--navy);
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      font-weight: bold;
+      padding: 3px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-titlebar .icon { font-size: 0.75rem; }
+
+    .panel-body {
+      padding: 14px 16px;
+    }
+
+    /* ── LEARN ── */
+    .learn-body {
+      background: #ffffc0;
+      border: 2px inset #c0c0c0;
+      padding: 12px 14px;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .learn-body p { margin-bottom: 8px; }
+    .learn-body p:last-child { margin-bottom: 0; }
+
+    details.learn-more {
+      margin-top: 10px;
+      border-top: 1px solid #b0a000;
+      padding-top: 8px;
+    }
+
+    details.learn-more summary {
+      font-size: 0.825rem;
+      color: var(--navy);
+      cursor: pointer;
+      font-weight: bold;
+      font-family: Arial, sans-serif;
+    }
+
+    details.learn-more .terms {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    details.learn-more .term {
+      font-size: 0.825rem;
+      padding: 8px;
+      background: #ffffff;
+      border: 1px inset #c0c0c0;
+    }
+
+    details.learn-more .term strong {
+      display: block;
+      font-family: Arial, sans-serif;
+      font-weight: bold;
+      color: var(--navy);
+      margin-bottom: 3px;
+    }
+
+    /* ── FORM FIELDS ── */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    .field label {
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .field input[type="text"] {
+      padding: 4px 6px;
+      border: 2px inset #c0c0c0;
+      font-size: 0.9rem;
+      font-family: 'Times New Roman', serif;
+      background: #ffffff;
+      color: #000000;
+      width: 100%;
+    }
+
+    .field input[type="text"]:focus {
+      outline: 1px dotted var(--navy);
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .row .field { flex: 1; }
+
+    /* ── ADVERSARIAL TOGGLE ── */
+    .adversarial-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: #000080;
+      color: #ffffff;
+      border: 2px solid;
+      border-color: #6060c0 #000040 #000040 #6060c0;
+      margin-bottom: 16px;
+    }
+
+    .adversarial-row input[type="checkbox"] {
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .adversarial-row .adv-label {
+      font-size: 0.875rem;
+      font-family: Arial, sans-serif;
+    }
+
+    .adversarial-row .adv-label strong {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.9rem;
+    }
+
+    .adversarial-row .adv-label span {
+      font-size: 0.8rem;
+      color: #a0c0ff;
+    }
+
+    /* ── CHECKBOXES ── */
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 8px;
+      background: #ffffff;
+      border: 1px inset #c0c0c0;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .checkbox-item .cb-label {
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .checkbox-item .cb-label span {
+      display: block;
+      font-size: 0.775rem;
+      color: #444;
+      font-style: italic;
+    }
+
+    /* ── GENERATE BUTTON ── */
+    .generate-btn {
+      width: 100%;
+      padding: 10px;
+      background: #c0c0c0;
+      color: #000000;
+      border: 2px solid;
+      border-color: #ffffff #404040 #404040 #ffffff;
+      font-family: Arial, sans-serif;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    .generate-btn:hover {
+      background: #d0d0d0;
+    }
+
+    .generate-btn:active {
+      border-color: #404040 #ffffff #ffffff #404040;
+      padding: 11px 10px 9px;
+    }
+
+    /* ── OUTPUT ── */
+    .output { display: none; }
+    .output.visible { display: block; }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+    }
+
+    .copy-btn {
+      padding: 2px 12px;
+      background: #c0c0c0;
+      color: #000000;
+      border: 2px solid;
+      border-color: #ffffff #404040 #404040 #ffffff;
+      font-family: Arial, sans-serif;
+      font-size: 0.75rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .copy-btn:active {
+      border-color: #404040 #ffffff #ffffff #404040;
+    }
+
+    .copy-btn.copied { color: #008000; }
+
+    .prompt-box {
+      background: #000000;
+      color: #00ff00;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      padding: 16px;
+      border: 2px inset #c0c0c0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .llm-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #ffffc0;
+      border: 2px inset #c0c0c0;
+      font-size: 0.825rem;
+      font-family: Arial, sans-serif;
+    }
+
+    .llm-note strong {
+      font-weight: bold;
+      color: var(--navy);
+    }
+
+    /* ── INTERPRETATION GUIDE ── */
+    .guide-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+    }
+
+    .guide-table th {
+      padding: 6px 10px;
+      text-align: left;
+      font-weight: bold;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      border-bottom: 2px solid #808080;
+    }
+
+    .guide-table th.green-head {
+      background: #008000;
+      color: #ffffff;
+    }
+
+    .guide-table th.red-head {
+      background: #800000;
+      color: #ffffff;
+    }
+
+    .guide-table td {
+      padding: 5px 10px;
+      vertical-align: top;
+      border-bottom: 1px solid #c0c0c0;
+      line-height: 1.5;
+    }
+
+    .guide-table td.green-cell {
+      background: #f0fff0;
+      border-left: 3px solid #008000;
+    }
+
+    .guide-table td.red-cell {
+      background: #fff0f0;
+      border-left: 3px solid #cc0000;
+    }
+
+    .guide-table tr:last-child td { border-bottom: none; }
+
+    .guide-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .guide-col { width: 100%; }
+
+    .hard-note {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: #ffffc0;
+      border: 1px solid #b0a000;
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .hard-note strong {
+      display: block;
+      color: var(--navy);
+      margin-bottom: 3px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      text-align: center;
+      padding: 12px 24px;
+      font-family: Arial, sans-serif;
+      font-size: 0.775rem;
+      color: #a0c0ff;
+    }
+
+    footer a { color: #ffff80; text-decoration: underline; }
+    footer a:hover { color: #ffffff; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="header-logo">&#x1F6D2; PROMPT<span>SHOPPER</span></div>
+    <div class="header-badge">100% FREE!</div>
+  </div>
+  <div class="header-tagline">Stop getting sold to. Build a smarter shopping prompt.</div>
+  <nav class="header-nav">
+    <a href="#learn">&#x2139; Learn</a>
+    <span class="sep">|</span>
+    <a href="#build">&#x270F; Build</a>
+    <span class="sep">|</span>
+    <a href="https://github.com/mattcflynn/prompt-shopper" target="_blank">&#x2605; GitHub</a>
+  </nav>
+</header>
+
+<div class="layout">
+
+  <!-- Learn -->
+  <div class="panel" id="learn">
+    <div class="panel-titlebar"><span class="icon">&#x26A0;</span> BEFORE YOU SEARCH — READ THIS</div>
+    <div class="panel-body">
+      <div class="learn-body">
+        <p>LLMs feel like a smarter way to shop — but most are trained on the same affiliate blogs, SEO listicles, and sponsored content that pollutes Google. The result <em>looks</em> authoritative but is often just well-marketed consensus.</p>
+        <p>This tool builds a prompt that forces your LLM to show its sources, find failure modes, and separate what's popular from what's actually good.</p>
+        <details class="learn-more">
+          <summary>&#x25BA; What are GEO, dead web, and astroturfing?</summary>
+          <div class="terms">
+            <div class="term">
+              <strong>GEO (Generative Engine Optimization)</strong>
+              Brands now write content designed to influence LLM training data — not human readers. LLMs end up recommending products that were best at describing themselves to an AI, not products that are actually best.
+            </div>
+            <div class="term">
+              <strong>Dead web</strong>
+              The internet is dominated by low-effort affiliate content — "Top 10 Toasters of 2025!" written by people who never touched the products. LLM training data is saturated with it. "Consensus" often just means successful marketing.
+            </div>
+            <div class="term">
+              <strong>Astroturfed Reddit</strong>
+              Brands hire agencies to create aged accounts and post convincing product recommendations in subreddits. People trusted Reddit because it felt like real humans — which is exactly why it became a target.
+            </div>
+            <div class="term">
+              <strong>Affiliate flagging</strong>
+              Sites that earn commissions on sales have a financial incentive to recommend products regardless of quality. A good LLM response identifies these sources so you can weigh them accordingly.
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <!-- Query -->
+  <div class="panel" id="build">
+    <div class="panel-titlebar"><span class="icon">&#x1F50D;</span> STEP 1 — WHAT ARE YOU SHOPPING FOR?</div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="field">
+          <label for="product">Product</label>
+          <input type="text" id="product" placeholder="e.g. espresso machine, running shoes, air purifier">
+        </div>
+        <div class="field" style="max-width: 160px;">
+          <label for="budget">Budget (optional)</label>
+          <input type="text" id="budget" placeholder="e.g. $500">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Adversarial toggle -->
+  <div class="adversarial-row">
+    <input type="checkbox" id="adversarial" checked>
+    <div class="adv-label">
+      <strong>&#x2694; ADVERSARIAL MODE</strong>
+      <span>Instructs the LLM to stress-test conventional wisdom rather than confirm it. Turns "what's the best X?" into "what does the X owner community actually complain about?" Recommended — this is where the real signal is.</span>
+    </div>
+  </div>
+
+  <!-- Options -->
+  <div class="panel">
+    <div class="panel-titlebar"><span class="icon">&#x2605;</span> STEP 2 — PRIORITIZE THESE SOURCES</div>
+    <div class="panel-body">
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="owner_forums" checked>
+          <div class="cb-label">
+            Owner forums and communities
+            <span>Weights Reddit, enthusiast forums, and long-term review threads over editorial review sites</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="long_term" checked>
+          <div class="cb-label">
+            Long-term owner reports (12+ months)
+            <span>Filters for people who have lived with the product, not first-impression reviewers</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="repair_data" checked>
+          <div class="cb-label">
+            Repair and reliability data
+            <span>Finds the most commonly reported failure mode for each product, with the source community named</span>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-titlebar"><span class="icon">&#x26D4;</span> STEP 3 — FLAG THESE SOURCES</div>
+    <div class="panel-body">
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="flag_affiliate" checked>
+          <div class="cb-label">
+            Affiliate review sites
+            <span>Identifies sources that earn commission on sales and marks them inline</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="flag_manufacturer" checked>
+          <div class="cb-label">
+            Manufacturer and retailer content
+            <span>Flags claims that originate from the brand or a store selling the product</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="flag_amazon" checked>
+          <div class="cb-label">
+            Amazon reviews
+            <span>Excludes Amazon reviews as evidence — they are heavily gamed and unreliable for most categories</span>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-titlebar"><span class="icon">&#x2713;</span> STEP 4 — INCLUDE IN THE OUTPUT</div>
+    <div class="panel-body">
+      <div class="checkbox-group">
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="not_recommending" checked>
+          <div class="cb-label">
+            Products you're NOT recommending and why
+            <span>Forces the LLM to name what it's ruling out, based on owner reports</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="tco" checked>
+          <div class="cb-label">
+            Total cost of ownership
+            <span>Accessories, required upgrades, maintenance — not just the purchase price</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="popular_vs_good" checked>
+          <div class="cb-label">
+            Separate popular from good
+            <span>Distinguishes "widely recommended" from "widely owned and liked" — these are not the same thing</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="confidence" checked>
+          <div class="cb-label">
+            Confidence section
+            <span>Requires the LLM to end with an explicit statement of where it's least certain and why</span>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generate()">&#x2192; GENERATE MY PROMPT</button>
+
+  <!-- Output -->
+  <div class="output" id="output">
+    <div class="panel">
+      <div class="panel-titlebar">
+        <span style="flex:1">&#x1F4CB; YOUR PROMPT — COPY AND PASTE INTO YOUR LLM</span>
+        <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">COPY</button>
+      </div>
+      <div class="panel-body" style="padding: 0;">
+        <div class="prompt-box" id="promptBox"></div>
+      </div>
+    </div>
+    <div class="llm-note">
+      <strong>&#x26A0; Which LLM to use:</strong> Claude and ChatGPT both work well. Use a thinking or reasoning mode if your LLM offers one — it produces noticeably more thorough, self-critical results. Avoid fast or quick modes. <strong>Note on Gemini:</strong> Google may inject paid Shopping links into responses regardless of your instructions — check any product links before trusting them.
+    </div>
+
+    <div class="panel" style="margin-top: 16px;">
+      <div class="panel-titlebar">&#x1F4D6; HOW TO READ YOUR RESULTS</div>
+      <div class="panel-body">
+        <div class="guide-cols">
+          <table class="guide-table guide-col" style="border-right: 2px solid #808080;">
+            <thead>
+              <tr><th class="green-head">&#x2705; GREEN FLAGS — it did the work</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="green-cell">Cites specific forum threads or communities, not just "reviews say"</td></tr>
+              <tr><td class="green-cell">Names failure modes <em>and</em> which community reported them</td></tr>
+              <tr><td class="green-cell">Has an explicit "NOT recommending" section</td></tr>
+              <tr><td class="green-cell">Flags affiliate sources inline</td></tr>
+              <tr><td class="green-cell">Top pick differs from the universal consensus</td></tr>
+              <tr><td class="green-cell">Distinguishes product variants (e.g. Gaggia Evo Pro vs Classic Pro)</td></tr>
+              <tr><td class="green-cell">Includes total cost of ownership, not just sticker price</td></tr>
+              <tr><td class="green-cell">Ends with genuine uncertainty — admits what it doesn't know</td></tr>
+            </tbody>
+          </table>
+          <table class="guide-table guide-col">
+            <thead>
+              <tr><th class="red-head">&#x26D4; RED FLAGS — generic consensus answer</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="red-cell">First recommendation matches every other site's</td></tr>
+              <tr><td class="red-cell">No citations, or vague ones ("according to experts")</td></tr>
+              <tr><td class="red-cell">No failure modes, or one sentence buried at the end</td></tr>
+              <tr><td class="red-cell">Ends with an upsell ("want me to find accessories?")</td></tr>
+              <tr><td class="red-cell">Confident throughout — no uncertainty anywhere</td></tr>
+              <tr><td class="red-cell">Wirecutter / Tom's Guide cited without affiliate flag</td></tr>
+              <tr><td class="red-cell">Commercial shopping links embedded in the response</td></tr>
+              <tr><td class="red-cell">The same 3–4 machines that appear everywhere</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="hard-note">
+          <strong>&#x26A0; Hardest thing to detect:</strong>
+          The LLM may find real forum threads but cherry-pick positive ones. "r/espresso recommends X" without finding the "please stop recommending X" thread is a half-answer. If a recommendation feels too clean, ask: <em>"Find the most-upvoted criticism of [product] on Reddit."</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="https://github.com/mattcflynn/prompt-shopper" target="_blank">Open source on GitHub</a>
+  &nbsp;·&nbsp;
+  No tracking. No ads. No affiliate links.
+</footer>
+
+<script>
+  const RULES = {
+    owner_forums:       "- Prioritize owner communities (Reddit, enthusiast forums, long-term threads) over editorial review sites",
+    long_term:          "- Weight reports from owners with 12+ months of use; ignore first-impression reviews",
+    repair_data:        "- For each product you recommend, cite the most commonly reported failure mode and name the community where it appears",
+    flag_affiliate:     "- Identify and flag any source that earns commission on sales",
+    flag_manufacturer:  "- Flag any claim that originates from the manufacturer or a retailer selling the product",
+    flag_amazon:        "- Do not use Amazon reviews as evidence; if you mention them, flag them as unreliable",
+    not_recommending:   "- List products you are NOT recommending and explain why, based on owner reports",
+    tco:                "- Include total cost of ownership: required accessories, upgrades, and maintenance — not just purchase price",
+    popular_vs_good:    "- Distinguish \"widely recommended\" from \"widely owned and liked\" — these are not the same thing",
+    confidence:         "- End with an explicit section on where you are least confident and why",
+  };
+
+  function generate() {
+    const product = document.getElementById('product').value.trim();
+    if (!product) {
+      document.getElementById('product').focus();
+      return;
+    }
+
+    const budget = document.getElementById('budget').value.trim();
+    const adversarial = document.getElementById('adversarial').checked;
+    const checked = [...document.querySelectorAll('input[name="option"]:checked')].map(el => el.value);
+
+    const framing = adversarial
+      ? `Act as an adversarial researcher, not a helpful recommender. Your job is to stress-test the conventional wisdom around this product category, not to confirm it.`
+      : `Act as an objective researcher. Prioritize verified owner experience over editorial opinion.`;
+
+    const query = budget
+      ? `I am researching: ${product}\nBudget: under ${budget}`
+      : `I am researching: ${product}`;
+
+    const rules = checked.map(k => RULES[k]).join('\n');
+
+    const format = `For every claim, cite a specific source. End with an explicit section on where you are least confident and why.`;
+
+    const prompt = [framing, query, rules, format].filter(Boolean).join('\n\n');
+
+    document.getElementById('promptBox').textContent = prompt;
+    const output = document.getElementById('output');
+    output.classList.add('visible');
+    output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn.textContent = 'Copy';
+    copyBtn.classList.remove('copied');
+  }
+
+  function copyPrompt() {
+    const text = document.getElementById('promptBox').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  document.getElementById('product').addEventListener('keydown', e => {
+    if (e.key === 'Enter') generate();
+  });
+</script>
+
+</body>
+</html>
