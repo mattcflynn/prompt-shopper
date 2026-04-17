@@ -237,41 +237,6 @@
 
     .row .field { flex: 1; }
 
-    /* ── ADVERSARIAL TOGGLE ── */
-    .adversarial-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 10px 12px;
-      background: #000080;
-      color: #ffffff;
-      border: 2px solid;
-      border-color: #6060c0 #000040 #000040 #6060c0;
-      margin-bottom: 16px;
-    }
-
-    .adversarial-row input[type="checkbox"] {
-      margin-top: 3px;
-      flex-shrink: 0;
-    }
-
-    .adversarial-row .adv-label {
-      font-size: 0.875rem;
-      font-family: Arial, sans-serif;
-    }
-
-    .adversarial-row .adv-label strong {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 2px;
-      font-size: 0.9rem;
-    }
-
-    .adversarial-row .adv-label span {
-      font-size: 0.8rem;
-      color: #a0c0ff;
-    }
-
     /* ── CHECKBOXES ── */
     .checkbox-group {
       display: flex;
@@ -540,7 +505,7 @@
     <div class="panel-body">
       <div class="learn-body">
         <p>LLMs feel like a smarter way to shop — but most are trained on the same affiliate blogs, SEO listicles, and sponsored content that pollutes Google. The result <em>looks</em> authoritative but is often just well-marketed consensus.</p>
-        <p>This tool builds a prompt that forces your LLM to show its sources, find failure modes, and separate what's popular from what's actually good.</p>
+        <p>This tool builds a prompt that forces your LLM to stress-test conventional wisdom rather than confirm it — turning "what's the best X?" into "what does the owner community actually complain about?" Every prompt is adversarial by design. That's where the real signal is.</p>
         <details class="learn-more">
           <summary>&#x25BA; What are GEO, dead web, and astroturfing?</summary>
           <div class="terms">
@@ -585,15 +550,6 @@
         <input type="text" id="specs" placeholder="e.g. kid-friendly, easy to clean, black, fits under 18 inches, for wide feet">
         <span class="field-hint">Size, color, style, use case, household constraints — anything that matters to you</span>
       </div>
-    </div>
-  </div>
-
-  <!-- Adversarial toggle -->
-  <div class="adversarial-row">
-    <input type="checkbox" id="adversarial" checked>
-    <div class="adv-label">
-      <strong>&#x2694; ADVERSARIAL MODE</strong>
-      <span>Instructs the LLM to stress-test conventional wisdom rather than confirm it. Turns "what's the best X?" into "what does the X owner community actually complain about?" Recommended — this is where the real signal is.</span>
     </div>
   </div>
 
@@ -752,15 +708,12 @@
       return;
     }
 
-    const budget      = document.getElementById('budget').value.trim();
-    const specs       = document.getElementById('specs').value.trim();
-    const adversarial = document.getElementById('adversarial').checked;
-    const newProduct  = document.getElementById('new_product').checked;
-    const depth       = document.querySelector('input[name="depth"]:checked').value;
+    const budget     = document.getElementById('budget').value.trim();
+    const specs      = document.getElementById('specs').value.trim();
+    const newProduct = document.getElementById('new_product').checked;
+    const depth      = document.querySelector('input[name="depth"]:checked').value;
 
-    const framing = adversarial
-      ? `Act as an adversarial researcher, not a helpful recommender. Your job is to stress-test the conventional wisdom around this product category, not to confirm it.`
-      : `Act as an objective researcher. Prioritize verified owner experience over editorial opinion.`;
+    const framing = `Act as an adversarial researcher, not a helpful recommender. Your job is to stress-test the conventional wisdom around this product category, not to confirm it.`;
 
     const queryLines = [`I am researching: ${product}`];
     if (budget) queryLines.push(`Budget: under ${budget}`);
