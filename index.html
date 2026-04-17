@@ -695,12 +695,15 @@
               <tr><td class="red-cell">Wirecutter / Tom's Guide cited without affiliate flag</td></tr>
               <tr><td class="red-cell">Commercial shopping links embedded in the response</td></tr>
               <tr><td class="red-cell">The same 3–4 machines that appear everywhere</td></tr>
+              <tr><td class="red-cell">Reddit cited but no thread title or URL — Reddit is largely inaccessible to LLMs and unverifiable Reddit citations may be fabricated</td></tr>
+              <tr><td class="red-cell">Numbered footnotes ([Source 1.2]) with no publication name or URL — these are citation formatting, not actual citations</td></tr>
             </tbody>
           </table>
         </div>
         <div class="hard-note">
-          <strong>&#x26A0; Hardest thing to detect:</strong>
+          <strong>&#x26A0; Hardest things to detect:</strong>
           The LLM may find real forum threads but cherry-pick positive ones. "r/espresso recommends X" without finding the "please stop recommending X" thread is a half-answer. If a recommendation feels too clean, ask: <em>"Find the most-upvoted criticism of [product] on Reddit."</em>
+          <br><br>Reddit is largely inaccessible to LLMs — most crawlers are blocked. An LLM that confidently cites specific subreddit threads without a verifiable URL or thread title may be fabricating those citations. Accurate-sounding facts wrapped in fake sourcing are harder to catch than obvious hallucinations.
         </div>
       </div>
     </div>
@@ -716,7 +719,7 @@
 
 <script>
   const RULES = {
-    owner_forums:       "- Prioritize owner communities (Reddit, enthusiast forums, long-term threads) over editorial review sites",
+    owner_forums:       "- Prioritize owner communities (enthusiast forums, long-term review threads, Reddit where accessible) over editorial review sites",
     long_term:          "- Weight reports from owners with 12+ months of use; ignore first-impression reviews",
     industry_layer:     "- Before listing specific products, identify any industry-wide practices or structural issues that affect the entire category regardless of brand",
     overview:           "- Provide a vetted overview of the current product landscape for this category: recent recalls, safety incidents, regulatory actions, industry controversies, supply chain changes, or other market-wide developments — cite all claims",
