@@ -305,6 +305,52 @@
       font-style: italic;
     }
 
+    /* ── DEPTH SELECTOR ── */
+    .depth-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .depth-option {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px;
+      border: 2px solid;
+      border-color: #ffffff #808080 #808080 #ffffff;
+      background: #c0c0c0;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .depth-option input[type="radio"] { display: none; }
+
+    .depth-option--selected {
+      background: var(--navy);
+      border-color: #6060c0 #000040 #000040 #6060c0;
+    }
+
+    .depth-label strong {
+      font-family: Arial, sans-serif;
+      font-size: 0.85rem;
+      display: block;
+    }
+
+    .depth-option--selected .depth-label strong {
+      color: var(--yellow);
+    }
+
+    .depth-label span {
+      font-family: Arial, sans-serif;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .depth-option--selected .depth-label span {
+      color: #a0c0ff;
+    }
+
     /* ── GENERATE BUTTON ── */
     .generate-btn {
       width: 100%;
@@ -551,112 +597,40 @@
     </div>
   </div>
 
-  <!-- Options -->
+  <!-- Depth selector -->
   <div class="panel">
-    <div class="panel-titlebar"><span class="icon">&#x2605;</span> STEP 2 — PRIORITIZE THESE SOURCES</div>
+    <div class="panel-titlebar"><span class="icon">&#x2605;</span> STEP 2 — HOW DEEP SHOULD THIS GO?</div>
     <div class="panel-body">
-      <div class="checkbox-group">
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="owner_forums" checked>
-          <div class="cb-label">
-            Owner forums and communities
-            <span>Weights Reddit, enthusiast forums, and long-term review threads over editorial review sites</span>
+      <div class="depth-options">
+        <label class="depth-option" id="depth-quick">
+          <input type="radio" name="depth" value="quick">
+          <div class="depth-label">
+            <strong>Quick</strong>
+            <span>Sources flagged, citations required, popular ≠ good. Best for low-stakes or straightforward purchases.</span>
           </div>
         </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="long_term" checked>
-          <div class="cb-label">
-            Long-term owner reports (12+ months)
-            <span>Filters for people who have lived with the product, not first-impression reviewers</span>
+        <label class="depth-option depth-option--selected" id="depth-standard">
+          <input type="radio" name="depth" value="standard" checked>
+          <div class="depth-label">
+            <strong>Standard</strong>
+            <span>Adds failure modes, what NOT to buy, total cost of ownership, and industry-wide issues. Best for most purchases.</span>
           </div>
         </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="repair_data" checked>
-          <div class="cb-label">
-            Repair and reliability data
-            <span>Finds the most commonly reported failure mode for each product, with the source community named</span>
+        <label class="depth-option" id="depth-deep">
+          <input type="radio" name="depth" value="deep">
+          <div class="depth-label">
+            <strong>Deep</strong>
+            <span>Adds full product landscape overview, recent recalls, regulatory actions, and market trends. Best for major purchases.</span>
           </div>
         </label>
       </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-titlebar"><span class="icon">&#x26D4;</span> STEP 3 — FLAG THESE SOURCES</div>
-    <div class="panel-body">
-      <div class="checkbox-group">
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="flag_affiliate" checked>
-          <div class="cb-label">
-            Affiliate review sites
-            <span>Identifies sources that earn commission on sales and marks them inline</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="flag_manufacturer" checked>
-          <div class="cb-label">
-            Manufacturer and retailer content
-            <span>Flags claims that originate from the brand or a store selling the product</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="flag_amazon" checked>
-          <div class="cb-label">
-            Amazon reviews
-            <span>Excludes Amazon reviews as evidence — they are heavily gamed and unreliable for most categories</span>
-          </div>
-        </label>
-      </div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <div class="panel-titlebar"><span class="icon">&#x2713;</span> STEP 4 — INCLUDE IN THE OUTPUT</div>
-    <div class="panel-body">
-      <div class="checkbox-group">
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="not_recommending" checked>
-          <div class="cb-label">
-            Products you're NOT recommending and why
-            <span>Forces the LLM to name what it's ruling out, based on owner reports</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="tco" checked>
-          <div class="cb-label">
-            Total cost of ownership
-            <span>Accessories, required upgrades, maintenance — not just the purchase price</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="popular_vs_good" checked>
-          <div class="cb-label">
-            Separate popular from good
-            <span>Distinguishes "widely recommended" from "widely owned and liked" — these are not the same thing</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="confidence" checked>
-          <div class="cb-label">
-            Confidence section
-            <span>Requires the LLM to end with an explicit statement of where it's least certain and why</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="industry_layer" checked>
-          <div class="cb-label">
-            Industry-wide issues before products
-            <span>Surfaces category-level deceptive practices or structural problems before listing specific brands — often the most valuable finding</span>
-          </div>
-        </label>
-        <label class="checkbox-item">
-          <input type="checkbox" name="option" value="overview">
-          <div class="cb-label">
-            Product space overview, trends and controversies
-            <span>Recent recalls, safety incidents, regulatory actions, supply chain changes, or market-wide developments — useful for big purchases, overkill for simple ones</span>
-          </div>
-        </label>
-      </div>
+      <label class="checkbox-item" style="margin-top: 12px;">
+        <input type="checkbox" id="new_product">
+        <div class="cb-label">
+          This is a recently released product
+          <span>Adjusts for limited long-term owner data — notes the gap rather than requiring 12+ month reports that don't exist yet</span>
+        </div>
+      </label>
     </div>
   </div>
 
@@ -733,20 +707,43 @@
 </footer>
 
 <script>
-  const RULES = {
-    owner_forums:       "- Prioritize owner communities (enthusiast forums, long-term review threads, Reddit where accessible) over editorial review sites",
-    long_term:          "- Weight reports from owners with 12+ months of use; ignore first-impression reviews",
-    industry_layer:     "- Before listing specific products, identify any industry-wide practices or structural issues that affect the entire category regardless of brand",
-    overview:           "- Provide a vetted overview of the current product landscape for this category: recent recalls, safety incidents, regulatory actions, industry controversies, supply chain changes, or other market-wide developments — cite all claims",
-    repair_data:        "- For each product you recommend, cite the most commonly reported failure mode and name the community where it appears",
-    flag_affiliate:     "- Identify and flag any source that earns commission on sales",
-    flag_manufacturer:  "- Flag any claim that originates from the manufacturer or a retailer selling the product",
-    flag_amazon:        "- Do not use Amazon reviews as evidence; if you mention them, flag them as unreliable",
-    not_recommending:   "- List products you are NOT recommending and explain why, based on owner reports",
-    tco:                "- Include total cost of ownership: required accessories, upgrades, and maintenance — not just purchase price",
-    popular_vs_good:    "- Distinguish \"widely recommended\" from \"widely owned and liked\" — these are not the same thing",
-    confidence:         "- End with an explicit section on where you are least confident and why",
+  // Always-on rules baked into every prompt
+  const ALWAYS_ON = [
+    "- Prioritize owner communities (enthusiast forums, long-term review threads, Reddit where accessible) over editorial review sites",
+    "- Identify and flag any source that earns commission on sales",
+    "- Flag any claim that originates from the manufacturer or a retailer selling the product",
+    "- Do not use Amazon reviews as evidence; if you mention them, flag them as unreliable",
+    "- Distinguish \"widely recommended\" from \"widely owned and liked\" — these are not the same thing",
+  ];
+
+  // Rules added per depth level (each level includes all previous)
+  const DEPTH_RULES = {
+    quick: [],
+    standard: [
+      "- For each product you recommend, cite the most commonly reported failure mode and name the community where it appears",
+      "- List products you are NOT recommending and explain why, based on owner reports",
+      "- Include total cost of ownership: required accessories, upgrades, and maintenance — not just purchase price",
+      "- Before listing specific products, identify any industry-wide practices or structural issues that affect the entire category regardless of brand",
+    ],
+    deep: [
+      "- For each product you recommend, cite the most commonly reported failure mode and name the community where it appears",
+      "- List products you are NOT recommending and explain why, based on owner reports",
+      "- Include total cost of ownership: required accessories, upgrades, and maintenance — not just purchase price",
+      "- Before listing specific products, identify any industry-wide practices or structural issues that affect the entire category regardless of brand",
+      "- Provide a vetted overview of the current product landscape: recent recalls, safety incidents, regulatory actions, industry controversies, supply chain changes, or other market-wide developments — cite all claims",
+    ],
   };
+
+  const LONG_TERM_RULE    = "- Weight reports from owners with 12+ months of use; ignore first-impression reviews";
+  const NEW_PRODUCT_RULE  = "- Long-term owner data may be limited for this product; use what is available and explicitly flag where the long-term record is thin";
+
+  // Wire up depth selector visual state
+  document.querySelectorAll('input[name="depth"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.depth-option').forEach(el => el.classList.remove('depth-option--selected'));
+      radio.closest('.depth-option').classList.add('depth-option--selected');
+    });
+  });
 
   function generate() {
     const product = document.getElementById('product').value.trim();
@@ -755,10 +752,11 @@
       return;
     }
 
-    const budget = document.getElementById('budget').value.trim();
-    const specs = document.getElementById('specs').value.trim();
+    const budget      = document.getElementById('budget').value.trim();
+    const specs       = document.getElementById('specs').value.trim();
     const adversarial = document.getElementById('adversarial').checked;
-    const checked = [...document.querySelectorAll('input[name="option"]:checked')].map(el => el.value);
+    const newProduct  = document.getElementById('new_product').checked;
+    const depth       = document.querySelector('input[name="depth"]:checked').value;
 
     const framing = adversarial
       ? `Act as an adversarial researcher, not a helpful recommender. Your job is to stress-test the conventional wisdom around this product category, not to confirm it.`
@@ -766,10 +764,11 @@
 
     const queryLines = [`I am researching: ${product}`];
     if (budget) queryLines.push(`Budget: under ${budget}`);
-    if (specs) queryLines.push(`Requirements: ${specs}`);
+    if (specs)  queryLines.push(`Requirements: ${specs}`);
     const query = queryLines.join('\n');
 
-    const rules = checked.map(k => RULES[k]).join('\n');
+    const ownerDataRule = newProduct ? NEW_PRODUCT_RULE : LONG_TERM_RULE;
+    const rules = [...ALWAYS_ON, ownerDataRule, ...DEPTH_RULES[depth]].join('\n');
 
     const format = `Begin with a brief methodology note listing which source types you were able to access and which were unavailable or unreliable for this query. For every claim, cite a specific source — a citation must include a publication name, forum name, or URL. Numbered footnotes without an identifiable source are not acceptable. End with an explicit section on where you are least confident and why.`;
 
