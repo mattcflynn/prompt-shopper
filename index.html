@@ -628,6 +628,20 @@
             <span>Requires the LLM to end with an explicit statement of where it's least certain and why</span>
           </div>
         </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="industry_layer" checked>
+          <div class="cb-label">
+            Industry-wide issues before products
+            <span>Surfaces category-level deceptive practices or structural problems before listing specific brands — often the most valuable finding</span>
+          </div>
+        </label>
+        <label class="checkbox-item">
+          <input type="checkbox" name="option" value="overview">
+          <div class="cb-label">
+            Product space overview, trends and controversies
+            <span>Recent recalls, safety incidents, regulatory actions, supply chain changes, or market-wide developments — useful for big purchases, overkill for simple ones</span>
+          </div>
+        </label>
       </div>
     </div>
   </div>
@@ -704,6 +718,8 @@
   const RULES = {
     owner_forums:       "- Prioritize owner communities (Reddit, enthusiast forums, long-term threads) over editorial review sites",
     long_term:          "- Weight reports from owners with 12+ months of use; ignore first-impression reviews",
+    industry_layer:     "- Before listing specific products, identify any industry-wide practices or structural issues that affect the entire category regardless of brand",
+    overview:           "- Provide a vetted overview of the current product landscape for this category: recent recalls, safety incidents, regulatory actions, industry controversies, supply chain changes, or other market-wide developments — cite all claims",
     repair_data:        "- For each product you recommend, cite the most commonly reported failure mode and name the community where it appears",
     flag_affiliate:     "- Identify and flag any source that earns commission on sales",
     flag_manufacturer:  "- Flag any claim that originates from the manufacturer or a retailer selling the product",
@@ -735,7 +751,7 @@
 
     const rules = checked.map(k => RULES[k]).join('\n');
 
-    const format = `For every claim, cite a specific source. End with an explicit section on where you are least confident and why.`;
+    const format = `Begin with a brief methodology note listing which source types you were able to access and which were unavailable or unreliable for this query. For every claim, cite a specific source. End with an explicit section on where you are least confident and why.`;
 
     const prompt = [framing, query, rules, format].filter(Boolean).join('\n\n');
 
