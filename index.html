@@ -207,6 +207,15 @@
       font-weight: bold;
     }
 
+    .field-hint {
+      font-family: Arial, sans-serif;
+      font-size: 0.75rem;
+      color: #555;
+      font-style: italic;
+      margin-top: 3px;
+      display: block;
+    }
+
     .field input[type="text"] {
       padding: 4px 6px;
       border: 2px inset #c0c0c0;
@@ -525,6 +534,11 @@
           <input type="text" id="budget" placeholder="e.g. $500">
         </div>
       </div>
+      <div class="field">
+        <label for="specs">Requirements (optional)</label>
+        <input type="text" id="specs" placeholder="e.g. kid-friendly, easy to clean, black, fits under 18 inches, for wide feet">
+        <span class="field-hint">Size, color, style, use case, household constraints — anything that matters to you</span>
+      </div>
     </div>
   </div>
 
@@ -742,6 +756,7 @@
     }
 
     const budget = document.getElementById('budget').value.trim();
+    const specs = document.getElementById('specs').value.trim();
     const adversarial = document.getElementById('adversarial').checked;
     const checked = [...document.querySelectorAll('input[name="option"]:checked')].map(el => el.value);
 
@@ -749,9 +764,10 @@
       ? `Act as an adversarial researcher, not a helpful recommender. Your job is to stress-test the conventional wisdom around this product category, not to confirm it.`
       : `Act as an objective researcher. Prioritize verified owner experience over editorial opinion.`;
 
-    const query = budget
-      ? `I am researching: ${product}\nBudget: under ${budget}`
-      : `I am researching: ${product}`;
+    const queryLines = [`I am researching: ${product}`];
+    if (budget) queryLines.push(`Budget: under ${budget}`);
+    if (specs) queryLines.push(`Requirements: ${specs}`);
+    const query = queryLines.join('\n');
 
     const rules = checked.map(k => RULES[k]).join('\n');
 
